@@ -40,5 +40,7 @@ public class Ex4_23 {
     System.out.printf("     State Witholding (%2.1f%%): $%.2f\r\n", stateTaxRate * 100, stateWitholding);
     System.out.printf("     Total Deductions: $%.2f \r\n", federalWitholding + stateWitholding);
     System.out.printf("Net Pay: $%.2f", netPay);
+
+    scanner.close();
   }
 }
