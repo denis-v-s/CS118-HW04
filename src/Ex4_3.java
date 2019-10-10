@@ -1,36 +1,39 @@
 /*
-* (Geography: estimate areas) Use the GPS locations for Atlanta, Georgia; Orlando, Florida; Savannah, Georgia; 
-* and Charlotte, North Carolina in the figure in Section 4.1 to compute the estimated area enclosed by these four 
-* cities. (Hint: Use the formula in Programming Exercise 4.2 to compute the distance between two cities. Divide 
-* the polygon into two triangles and use the formula in Programming Exercise 2.19 to compute the area of a triangle.)
+* (Geography: estimate areas)
 */
 
 public class Ex4_3 {
   // calculate edge between two vertices
-	private static double getEdge(double x1, double x2, double y1, double y2) {
-		return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+	private static double getDistance(double x1, double x2, double y1, double y2) {
+		final double EARTH_RADIUS = 6371.01;
+		
+		return EARTH_RADIUS * Math.acos(Math.sin(x1) * Math.sin(x2) + Math.cos(x1) * Math.cos(x2) * Math.cos(y1 - y2));
 	}
 
 	public static void main(String[] args) {
-		double charlotte_lat = 35.2270869;
-		double atlanta_lat = 33.7489954;
-		double orlando_lat = 28.5383355;
-		double savannah_lat = 32.0835407;
+		double charlotte_lat = Math.toRadians(35.2270869);
+		double atlanta_lat = Math.toRadians(33.7489954);
+		double orlando_lat = Math.toRadians(28.5383355);
+		double savannah_lat = Math.toRadians(32.0835407);
 		
-		double charlotte_long = -80.8431267;
-		double atlanta_long = -84.3879824;
-		double orlando_long = -81.3792365;
-		double savannah_long = -81.0998342;
+		double charlotte_long = Math.toRadians(-80.8431267);
+		double atlanta_long = Math.toRadians(-84.3879824);
+		double orlando_long = Math.toRadians(-81.3792365);
+		double savannah_long = Math.toRadians(-81.0998342);
+
+		double d1 = getDistance(charlotte_lat, savannah_lat, charlotte_long, savannah_long);
+		double d2 = getDistance(savannah_lat, orlando_lat, savannah_long, orlando_long);
+		double d3 = getDistance(orlando_lat, atlanta_lat, orlando_long, atlanta_long);
+		double d4 = getDistance(charlotte_lat, atlanta_lat, charlotte_long, atlanta_long);
+		double d5 = getDistance(savannah_lat, atlanta_lat, savannah_long, atlanta_long);
+
+		double s = (d1 + d4 + d5) / 2;
+		double triangle1 = Math.sqrt(s * (s - d1) * (s - d4) * (s - d5));
+
+		s = (d2 + d3 + d5) / 2;
+		double triangle2 = Math.sqrt(s * (s - d2) * (s - d3) * (s - d5));
 		
-		double charlotte_atlanta = getEdge(charlotte_lat, atlanta_lat, charlotte_long, atlanta_long);
-		double charlotte_savannah = getEdge(charlotte_lat, savannah_lat, charlotte_long, savannah_long);
-		double savannah_orlando = getEdge(savannah_lat, orlando_lat, savannah_long, orlando_long);
-		double orlando_atlanta = getEdge(orlando_lat, atlanta_lat, orlando_long, atlanta_long);
-		
-		double triangle1 = (charlotte_atlanta * orlando_atlanta) / 2;
-		double triangle2 = (charlotte_savannah * savannah_orlando) / 2;
-		
-		double quadrilateral_area = triangle1 + triangle2;
-		System.out.println("Approximate area is: " + quadrilateral_area);
+		double area = triangle1 + triangle2;
+		System.out.printf("Approximate area is: %.8f", area);
 	}
 }
